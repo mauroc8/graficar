@@ -27,20 +27,30 @@ function línea(x, y) {
 function dibujar(expresión) {
 	var cadena	  = expresión.cadena,
 		color 	  = expresión.color,
-		i, x, y, error, anterior, tmp, último;
+		i, x, y, error, anterior, tmp, último, parse;
 	
 	cx.strokeStyle = color || "black";
 	cx.strokeWidth = 1.5;
+	
+	try {
+		parse = leer(cadena);
+	} catch(error) {
+		alert(error.message);
+		console.error(error);
+		return false;
+	}
 	
 	cx.beginPath();
 	
 	for(i = 0; i < cWidth + 2; i += 1) {
 		x = (i - centro.x) / escala;
-		try { y = calcular(cadena, {x: x}) }
-		catch (error) {
+		try {
+			y = evaluar(parse, {x: x});
+		} catch (error) {
 			alert(error.message);
 			console.error(error);
-			return;
+			console.log(parse);
+			return false;
 		}
 		
 		tmp = Math.abs(y * escala) <= centro.y;
@@ -57,6 +67,8 @@ function dibujar(expresión) {
 	}
 	
 	cx.stroke();
+	
+	return true;
 }
 
 function ejes() {
@@ -142,9 +154,13 @@ iColor.addEventListener("contextmenu", function(event) {
 
 iAgregar.addEventListener("click", function() {
 	var expresión = { cadena: iFormula.value, color: iColor.value };
-	expresiones.push(expresión);
-	dibujar(expresión);
-	lista_fn.appendChild(li_expresión(expresión));
+	if(dibujar(expresión)) {
+		expresiones.push(expresión);
+		lista_fn.appendChild(li_expresión(expresión));
+		iFormula.classList.remove("error");
+	} else {
+		iFormula.classList.add("error");
+	}
 });
 
 iEscala.addEventListener("change", function() {
@@ -168,7 +184,7 @@ function li_expresión(expresión) {
 	             '</li>');
 	$('input[type="text"]', li).addEventListener("change", function() {
 		try {
-			calcular(this.value, {x: 5});
+			leer(this.value);
 			this.classList.remove("error");
 			expresión.cadena = this.value;
 			window.onresize();
