@@ -121,13 +121,13 @@ window.onresize = function() {
 		contenedor.style.width = "200px";
 		canvas.width = cWidth = 200;
 		centro.x = cWidth / 2 + .5;
-	} else if(width < 450) {
+	} else if(width < 400) {
 		contenedor.style.width = "300px";
 		canvas.width = cWidth = 300;
 		centro.x = cWidth / 2 + .5;
 	} else if(width < 600) {
-		contenedor.style.width = "450px";
-		canvas.width = cWidth = 450;
+		contenedor.style.width = "400px";
+		canvas.width = cWidth = 400;
 		centro.x = cWidth / 2 + .5;
 	} else {
 		contenedor.style.width = "600px";
