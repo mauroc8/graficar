@@ -131,6 +131,7 @@ window.onresize = function() {
 		centro.x = cWidth / 2 + .5;
 	}
 	if(height < 200) {
+		alert(height);
 		canvas.height = cHeight = 100;
 		centro.y = cHeight / 2 + .5;
 	} else {
