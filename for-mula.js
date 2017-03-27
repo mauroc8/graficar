@@ -149,6 +149,9 @@ window.onresize = function() {
 	}
 	ejes();
 	expresiones.map(dibujar);
+	if(iFormula.value) {
+		dibujar({ cadena: iFormula.value, color: iColor.value });
+	}
 	window.scroll(0, 0);
 };
 

@@ -20,6 +20,8 @@ function leer(cadena, índice) {
 		},
 		tabla_precedencia = [
 			{ cadena: "^", binario: true, asocia: "derecha" },
+			{ cadena: ".", binario: true, asocia: "derecha" }, //multiplicación,
+															   //para uso interno exclusivamente
 			{ cadena: "sen|cos|tan|log|ln|abs|sqrt", binario: false, asocia: "derecha" },
 			{ cadena: "-", binario: false, asocia: "derecha" },
 			{ cadena: "*/", binario: true, asocia: "izquierda" },
@@ -75,15 +77,11 @@ function leer(cadena, índice) {
 						tmp = { tipo: "variable", variable: letra };
 					}
 					
-					resultado.expresión.push({
-						tipo: "expresión",
-						expresión: [
+					resultado.expresión.push(
 							{ tipo: "número", número: número },
-							{ tipo: "función", función: "*", binario: true },
+							{ tipo: "función", función: ".", binario: true },
 							tmp
-						],
-						posición: cursor + índice
-					});
+					);
 					
 				} else if(número === número) {
 					resultado.expresión.push({
@@ -293,6 +291,9 @@ var evaluar = function() {
 		},
 		"-": function(a, b) {
 			return a - b;
+		},
+		".": function(a, b) {
+			return a * b;
 		}
 	};
 
