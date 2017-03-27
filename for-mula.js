@@ -115,7 +115,8 @@ var expresiones = [],
 
 
 window.onresize = function() {
-	var width = window.innerWidth;
+	var width = window.innerWidth,
+		height = window.innerHeight;
 	if(width < 300) {
 		contenedor.style.width = "200px";
 		canvas.width = cWidth = 200;
@@ -129,8 +130,16 @@ window.onresize = function() {
 		canvas.width = cWidth = 600;
 		centro.x = cWidth / 2 + .5;
 	}
+	if(height < 200) {
+		canvas.height = cHeight = 100;
+		centro.y = cHeight / 2 + .5;
+	} else {
+		canvas.height = cHeight = 200;
+		centro.y = cHeight / 2 + .5;
+	}
 	ejes();
 	expresiones.map(dibujar);
+	window.scrollY = 0;
 };
 
 window.onresize();
