@@ -139,7 +139,7 @@ window.onresize = function() {
 	}
 	ejes();
 	expresiones.map(dibujar);
-	window.scrollY = 0;
+	window.scroll(0, 0);
 };
 
 window.onresize();
