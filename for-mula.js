@@ -24,6 +24,15 @@ function línea(x, y) {
 	cx.lineTo(centro.x + x * escala, centro.y - y * escala);
 }
 
+function probar(cadena) {
+	try {
+		leer(cadena);
+		return true;
+	} catch(error) {
+		return error;
+	}
+}
+
 function dibujar(expresión) {
 	var cadena	  = expresión.cadena,
 		color 	  = expresión.color,
@@ -32,14 +41,12 @@ function dibujar(expresión) {
 	cx.strokeStyle = color || "black";
 	cx.strokeWidth = 1.5;
 	
-	try {
+	if(probar(cadena) === true) {
 		parse = leer(cadena);
-	} catch(error) {
-		alert(error.message);
-		console.error(error);
+	} else {
 		return false;
 	}
-	
+		
 	cx.beginPath();
 	
 	for(i = 0; i < cWidth + 2; i += 1) {
@@ -47,7 +54,6 @@ function dibujar(expresión) {
 		try {
 			y = evaluar(parse, {x: x});
 		} catch (error) {
-			alert(error.message);
 			console.error(error);
 			console.log(parse);
 			return false;
@@ -152,19 +158,59 @@ contenedor.addEventListener("submit", function(event) {
 	event.preventDefault();
 });
 
+iFormula.addEventListener("keyup", function(event) {
+	if(this.value) {
+		var res = probar(iFormula.value);
+		if(res === true) {
+			var expresión = { cadena: iFormula.value, color: iColor.value };
+			cx.clearRect(0, 0, cWidth, cHeight);
+			ejes();
+			expresiones.map(dibujar);
+			dibujar(expresión);
+			iFormula.classList.remove("error");
+		} else {
+			iFormula.classList.add("error");
+		}
+	} else {
+		cx.clearRect(0, 0, cWidth, cHeight);
+		ejes();
+		expresiones.map(dibujar);
+		iFormula.classList.remove("error");
+	}
+});
+
 iColor.addEventListener("contextmenu", function(event) {
 	event.preventDefault();
 	iColor.value = color_aleatorio();
+	var expresión = { cadena: iFormula.value, color: iColor.value };
+	cx.clearRect(0, 0, cWidth, cHeight);
+	ejes();
+	expresiones.map(dibujar);
+	//dibujar no necesariamente termina su trabajo
+	dibujar(expresión);
+});
+
+iColor.addEventListener("change", function(event) {
+	var expresión = { cadena: iFormula.value, color: iColor.value };
+	cx.clearRect(0, 0, cWidth, cHeight);
+	ejes();
+	expresiones.map(dibujar);
+	//dibujar no necesariamente termina su trabajo
+	dibujar(expresión);
 });
 
 iAgregar.addEventListener("click", function() {
-	var expresión = { cadena: iFormula.value, color: iColor.value };
-	if(dibujar(expresión)) {
+	var res = probar(iFormula.value);
+	if(res === true) {
+		var expresión = { cadena: iFormula.value, color: iColor.value };
 		expresiones.push(expresión);
 		lista_fn.appendChild(li_expresión(expresión));
 		iFormula.classList.remove("error");
+		iFormula.value = "";
+		iFormula.focus();
 	} else {
 		iFormula.classList.add("error");
+		alert(res);
 	}
 });
 

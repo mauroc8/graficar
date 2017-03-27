@@ -12,6 +12,7 @@ function leer(cadena, índice) {
 	var cursor = 0,
 		operadores = "+-*/^", //se refiere a los binarios
 		funciones = ["sen", "cos", "tan", "log", "ln", "abs", "sqrt"],
+		constantes = {"π": Math.PI, "e": Math.E},
 		resultado = {
 			tipo: "expresión",
 			expresión: [],
@@ -37,8 +38,7 @@ function leer(cadena, índice) {
 				resultado.expresión.push({
 					tipo: "función",
 					función: cadena[cursor],
-					binario: !buscar,
-					posición: cursor + índice
+					binario: !buscar
 				});
 				cursor += 1;
 				return true;
@@ -57,23 +57,38 @@ function leer(cadena, índice) {
 				resultado.expresión.push(leer(subexpr, cursor + 1 + índice));
 				cursor += 1 + cierre;
 				return true;
-			} else if((subexpr = cadena.substr(cursor).match(/^[0-9\.]+ *[a-z]?/))) {
-				subexpr = subexpr[0];
-				var variable = subexpr.replace(/^[0-9\.]+ */, ''),
-					número = Number(subexpr.replace(/ *[a-z]?$/, ''));
 				
-				if(número && variable) {
-					error(!VARIABLES_PERMITIDAS.includes(variable), "Nombre de variable no permitido.");
-					resultado.expresión.push(
-						{ tipo: "número", número: número, posición: cursor + índice },
-						{ tipo: "función", función: "*", posición: cursor + índice, binario: true },
-						{ tipo: "variable", variable: variable, posición: cursor + índice + String(número).length }
-					);
+			} else if((subexpr = cadena.substr(cursor).match(/^[0-9\.]+ *[a-zπ]?/))) {
+				
+				subexpr = subexpr[0];
+				
+				var letra = subexpr.replace(/^[0-9\.]+ */, ''),
+					número = Number(subexpr.replace(/ *[a-zπ]?$/, '')),
+					tmp;
+				
+				if(número && letra) {
+					
+					if(constantes.hasOwnProperty(letra)) {
+						tmp = { tipo: "número", número: constantes[letra] };
+					} else {
+						error(!VARIABLES_PERMITIDAS.includes(letra), "Nombre de variable no permitido.");
+						tmp = { tipo: "variable", variable: letra };
+					}
+					
+					resultado.expresión.push({
+						tipo: "expresión",
+						expresión: [
+							{ tipo: "número", número: número },
+							{ tipo: "función", función: "*", binario: true },
+							tmp
+						],
+						posición: cursor + índice
+					});
+					
 				} else if(número === número) {
 					resultado.expresión.push({
 						tipo: "número",
-						número: número,
-						posición: cursor + índice
+						número: número
 					});
 				} else {
 					error(true, "Error leyendo valor numérico.");
@@ -87,8 +102,7 @@ function leer(cadena, índice) {
 					resultado.expresión.push({
 						tipo: "función",
 						función: funciones[i],
-						binario: false,
-						posición: cursor + índice
+						binario: false
 					});
 					cursor += funciones[i].length;
 					// Todavía nos queda leer
@@ -107,11 +121,21 @@ function leer(cadena, índice) {
 				resultado.expresión.push({
 					tipo: "función",
 					función: "abs",
-					binario: false,
-					posición: cursor + índice
+					binario: false
 				});
 				resultado.expresión.push(leer(subexpr, cursor + 1 + índice));
 				cursor += subexpr.length + 2;
+				return true;
+			}
+			
+			// Constantes
+			
+			if(constantes.hasOwnProperty(cadena[cursor])) {
+				resultado.expresión.push({
+					tipo: "número",
+					número: constantes[cadena[cursor]]
+				});
+				cursor += 1;
 				return true;
 			}
 			
@@ -120,8 +144,7 @@ function leer(cadena, índice) {
 				      "Nombre de variable no permitido.");
 				resultado.expresión.push({
 					tipo: "variable",
-					variable: cadena[cursor],
-					posición: cursor + índice
+					variable: cadena[cursor]
 				});
 				cursor += 1;
 				return true;
@@ -131,8 +154,7 @@ function leer(cadena, índice) {
 		},
 		error = function(bool, mensaje) {
 			if(bool) {
-				var e = new SyntaxError(mensaje);
-				e.posición = cursor + índice;
+				var e = new SyntaxError(mensaje + " en la posición " + (cursor + índice) + ".");
 				throw e;
 			}
 		},
@@ -279,8 +301,8 @@ var evaluar = function() {
 		"cos": Math.cos,
 		"tan": Math.tan,
 		"abs": Math.abs,
-		"log": Math.log,
-		"ln":  Math.ln,
+		"log": function(a) { return Math.log(a) / Math.LN10; },
+		"ln":  Math.log,
 		"sqrt":Math.sqrt,
 		"-":   function(a) { return -a; }
 	};

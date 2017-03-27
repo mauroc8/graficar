@@ -21,6 +21,9 @@
 	
 	@media (max-width:600px) {
 		input[name="formula"] { width:100%; }
+		body { max-width:400px; }
+	}
+	@media (max-width:400px) {
 		body { max-width:300px; }
 	}
 	@media (max-width:300px) {
@@ -31,7 +34,7 @@
 </head>
 <body>
 	<canvas width="100" height="200">Este navegador no soporta el elemento canvas.</canvas>
-	<form style="margin:0 auto;">
+	<form style="margin:0 auto;" autocomplete="off">
 		<input name="formula" value="" type="text"><!--
 	 --><input name="color" type="color" title="Click derecho para cambiar a un color aleatorio."><!--
 	 --><input name="agregar" value="Agregar" type="submit">
