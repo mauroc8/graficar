@@ -86,16 +86,7 @@ function ejes() {
 	cx.strokeWidth = 1;
 	cx.strokeStyle = "lightgray";
 	cx.stroke();
-	cx.fillStyle = "gray";
 	
-	var resto = cWidth % escala + escala / 2;
-	for(var i = 0; i < cWidth / escala; i += 1) {
-		punto(centro.x - i * escala - resto, 0);
-	}
-	resto = cHeight % escala + escala / 2;
-	for(var i = 0; i < cHeight / escala; i += 1) {
-		punto(0, centro.y - i * escala - resto);
-	}
 }
 
 function color_aleatorio() {
@@ -210,7 +201,6 @@ iAgregar.addEventListener("click", function() {
 		lista_fn.appendChild(li_expresión(expresión));
 		iFormula.classList.remove("error");
 		iFormula.value = "";
-		iFormula.focus();
 	} else {
 		iFormula.classList.add("error");
 		alert(res);
