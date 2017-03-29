@@ -39,7 +39,7 @@ function dibujar(expresión) {
 		i, x, y, error, anterior, tmp, último, parse;
 	
 	cx.strokeStyle = color || "black";
-	cx.strokeWidth = 1.5;
+	cx.lineWidth = 1.5;
 	
 	if(probar(cadena) === true) {
 		parse = leer(cadena);
@@ -78,15 +78,43 @@ function dibujar(expresión) {
 }
 
 function ejes() {
+	// Grilla
+	
+	var espaciado = escala;
+	if(escala < 1) { throw new Error("Escala menor a 1"); }
+	while(espaciado < 5) espaciado = espaciado * 2;
+	
+	var cantidad = Math.ceil(cWidth / espaciado),
+		inicio   = centro.x % espaciado;
+		
+	cx.beginPath();
+	cx.strokeStyle = "lightgray";
+	cx.lineWidth = 1;
+	
+	for(var i = 0; i < cantidad; i += 1) {
+		cx.moveTo(i * espaciado + inicio, 0);
+		cx.lineTo(i * espaciado + inicio, cHeight);
+	}
+	
+	cantidad = Math.ceil(cHeight / espaciado);
+	inicio = centro.y % espaciado;
+	
+	for(var i = 0; i < cantidad; i += 1) {
+		cx.moveTo(0, i * espaciado + inicio);
+		cx.lineTo(cWidth, i * espaciado + inicio);
+	}
+	
+	cx.stroke();
+	
+	// Ejes
+	
 	cx.beginPath();
 	cx.moveTo(centro.x, 0);
 	cx.lineTo(centro.x, cHeight);
 	cx.moveTo(0, centro.y);
 	cx.lineTo(cWidth, centro.y);
-	cx.strokeWidth = 1;
-	cx.strokeStyle = "lightgray";
+	cx.strokeStyle = "gray";
 	cx.stroke();
-	
 }
 
 function color_aleatorio() {
@@ -117,27 +145,37 @@ window.onresize = function() {
 	if(width < 300) {
 		contenedor.style.width = "200px";
 		canvas.width = cWidth = 200;
-		centro.x = cWidth / 2 + .5;
 	} else if(width < 400) {
 		contenedor.style.width = "300px";
 		canvas.width = cWidth = 300;
-		centro.x = cWidth / 2 + .5;
 	} else if(width < 600) {
 		contenedor.style.width = "400px";
 		canvas.width = cWidth = 400;
-		centro.x = cWidth / 2 + .5;
 	} else {
 		contenedor.style.width = "600px";
-		canvas.width = cWidth = 600;
-		centro.x = cWidth / 2 + .5;
+		
+		if(width < 800) {
+			canvas.width = cWidth = 600;
+		} else if(width < 1000) {
+			canvas.width = cWidth = 800;
+		} else {
+			canvas.width = cWidth = 1000;
+		}
 	}
-	if(height < 200) {
+	
+	if(height < 250) {
 		canvas.height = cHeight = 100;
-		centro.y = cHeight / 2 + .5;
+	} else if(height > 600 && width > 400) {
+		canvas.height = cHeight = 400;
+	} else if(height > 500 && width > 400) {
+		canvas.height = cHeight = 300;
 	} else {
 		canvas.height = cHeight = 200;
-		centro.y = cHeight / 2 + .5;
 	}
+	
+	centro.x = cWidth / 2 + .5;
+	centro.y = cHeight / 2 + .5;
+	
 	ejes();
 	expresiones.map(dibujar);
 	if(iFormula.value) {
