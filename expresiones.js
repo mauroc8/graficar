@@ -11,7 +11,7 @@ function leer(cadena, índice) {
 	
 	var cursor = 0,
 		operadores = "+-*/^", //se refiere a los binarios
-		funciones = ["sen", "cos", "tan", "log", "ln", "abs", "sqrt"],
+		funciones = ["sen", "cos", "tan", "log", "ln", "abs", "sqrt", "asen", "acos", "atan"],
 		constantes = {"π": Math.PI, "e": Math.E},
 		resultado = {
 			tipo: "expresión",
@@ -22,7 +22,7 @@ function leer(cadena, índice) {
 			{ cadena: "^", binario: true, asocia: "derecha" },
 			{ cadena: ".", binario: true, asocia: "derecha" }, //multiplicación,
 															   //para uso interno exclusivamente
-			{ cadena: "sen|cos|tan|log|ln|abs|sqrt", binario: false, asocia: "derecha" },
+			{ cadena: "sen|cos|tan|log|ln|abs|sqrt|asen|acos|atan", binario: false, asocia: "derecha" },
 			{ cadena: "-", binario: false, asocia: "derecha" },
 			{ cadena: "*/", binario: true, asocia: "izquierda" },
 			{ cadena: "+-", binario: true, asocia: "izquierda" },
@@ -305,6 +305,9 @@ var evaluar = function() {
 		"log": function(a) { return Math.log(a) / Math.LN10; },
 		"ln":  Math.log,
 		"sqrt":Math.sqrt,
+		"asen":Math.asin,
+		"acos":Math.acos,
+		"atan":Math.atan,
 		"-":   function(a) { return -a; }
 	};
 	
