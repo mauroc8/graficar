@@ -165,6 +165,8 @@ window.onresize = function() {
 	
 	if(height < 250) {
 		canvas.height = cHeight = 100;
+	} else if(height > 750 && width > 400) {
+		canvas.height = cHeight = 600;
 	} else if(height > 600 && width > 400) {
 		canvas.height = cHeight = 400;
 	} else if(height > 500 && width > 400) {
@@ -264,13 +266,12 @@ function li_expresión(expresión) {
 	               'title="Click derecho para cambiar a un color aleatorio."> ' +
 	             '<button style="color:darkred;">Borrar</button>' +
 	             '</li>');
-	$('input[type="text"]', li).addEventListener("change", function() {
-		try {
-			leer(this.value);
+	$('input[type="text"]', li).addEventListener("keyup", function() {
+		if(probar(this.value) === true) {
 			this.classList.remove("error");
 			expresión.cadena = this.value;
 			window.onresize();
-		} catch(error) {
+		} else {
 			this.classList.add("error");
 		}
 	});
