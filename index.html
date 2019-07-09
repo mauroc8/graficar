@@ -15,7 +15,9 @@
 	input[name="formula"] { width:calc(100% - 160px);box-sizing:border-box; }
 	input[name="color"] { width: 75px;box-sizing:border-box;margin:0;margin-left:5px; }
 	input[name="agregar"] { width:75px;box-sizing:border-box;margin:0;margin-left:5px; }
-	input[name="escala"] { width:40px; }
+	input[name="escala-range"] { float: left; }
+	input[name="escala-number"] { width: 45px;  }
+	
 	
 	.error { border-color:red; }
 	
@@ -47,8 +49,9 @@
 	</form>
 	<div id="contenedor" style="margin:0 auto;">
 		<ol id="funciones"></ol>
-		Escala:
-		<input name="escala" value="20" min="10" type="number" title="Escala">
+		<label for="escala-input">Escala:</label><br>
+		<input id="escala-input" type="range" min="1" max="200" value="20" name="escala-range" title="Escala">
+		<input type="number" name="escala-number" min="1" value="20" title="Escala">
 	</div>
 	<script src="expresiones.js"></script>
 	<script src="for-mula.js"></script>

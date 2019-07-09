@@ -9,8 +9,8 @@ var canvas 		= $('canvas'),
 var cWidth		= 600,
 	cHeight		= 200,
 	centro		= {x: cWidth / 2 + .5, y: cHeight / 2 + .5},
-	escala		= Number($('input[name="escala"]').value) || 20;
-	
+	escala		= Number($('input[name="escala-range"]').value) || 20;
+
 
 function punto(x, y) {
 	cx.fillRect(centro.x + x * escala, centro.y - y * escala, 1, 1);
@@ -81,7 +81,7 @@ function ejes() {
 	// Grilla
 	
 	var espaciado = escala;
-	if(escala < 1) { throw new Error("Escala menor a 1"); }
+	if(escala < 1) { throw new Error("La escala no puede ser menor que 1."); }
 	while(espaciado < 5) espaciado = espaciado * 2;
 	
 	var cantidad = Math.ceil(cWidth / espaciado),
@@ -135,7 +135,8 @@ var expresiones = [],
 	iFormula 	= $('input[name="formula"]'),
 	iAgregar	= $('input[name="agregar"]'),
 	iColor		= $('input[name="color"]'),
-	iEscala		= $('input[name="escala"]'),
+	iEscalaR	= $('input[name="escala-range"]'),
+	iEscalaN	= $('input[name="escala-number"]'),
 	lista_fn	= $('#funciones');
 
 
@@ -174,9 +175,6 @@ window.onresize = function() {
 	} else {
 		canvas.height = cHeight = 200;
 	}
-	
-	centro.x = cWidth / 2 + .5;
-	centro.y = cHeight / 2 + .5;
 	
 	ejes();
 	expresiones.map(dibujar);
@@ -247,8 +245,14 @@ iAgregar.addEventListener("click", function() {
 	}
 });
 
-iEscala.addEventListener("change", function() {
-	escala = Number(iEscala.value) || 20;
+
+iEscalaR.addEventListener("change", function() {
+	escala = iEscalaN.value = Number(iEscalaR.value) || 20;
+	window.onresize();
+});
+
+iEscalaN.addEventListener("change", function() {
+	escala = iEscalaR.value = Number(iEscalaN.value) || 20;
 	window.onresize();
 });
 
@@ -292,3 +296,33 @@ function li_expresión(expresión) {
 	li.referencia = expresión;
 	return li;
 }
+
+// Panear (mover) el viewport usando el mouse.
+
+var mousedown = false;
+var mouse = { x: 0, y: 0 };
+
+canvas.addEventListener('mousedown', function(event) {
+	mousedown = true;
+	mouse.x = event.clientX;
+	mouse.y = event.clientY;
+});
+
+window.addEventListener('mousemove', function(event) {
+	if (!mousedown) return;
+
+	var moveX = event.clientX - mouse.x;
+	var moveY = event.clientY - mouse.y;
+
+	mouse.x = event.clientX;
+	mouse.y = event.clientY;
+
+	centro.x += moveX;
+	centro.y += moveY;
+
+	window.onresize();
+});
+
+window.addEventListener('mouseup', function() {
+	mousedown = false;
+});
